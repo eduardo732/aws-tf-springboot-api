@@ -325,25 +325,3 @@ Or keep H2 for stateless/demo deployments (default).
 ## 📄 License
 
 This project is licensed under the MIT License.
-
-## 👥 Support
-
-For support, email support@api.cl
-
-## 🎯 Future Enhancements
-
-- [x] Docker & Docker Compose
-- [x] Terraform infrastructure (AWS EC2)
-- [x] LocalStack for AWS services emulation
-- [ ] Rate limiting
-- [ ] Redis caching
-- [ ] Email verification
-- [ ] Password reset functionality
-- [ ] OAuth2 integration
-- [ ] API versioning strategy
-- [ ] Comprehensive integration tests
-- [ ] CI/CD pipeline (GitHub Actions)
-- [ ] Monitoring & metrics (Prometheus, Grafana)
-- [ ] AWS ECS/Fargate deployment
-- [ ] Kubernetes manifests
-
