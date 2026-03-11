@@ -1,0 +1,35 @@
+services:
+  localstack:
+    image: localstack/localstack:1.4
+    container_name: localstack
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=s3,sqs,dynamodb,sns
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - base-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: base-api
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - localstack
+    networks:
+      - base-network
+    restart: unless-stopped
+
+networks:
+  base-network:
+    driver: bridge

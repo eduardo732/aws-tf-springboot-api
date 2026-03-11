@@ -27,17 +27,18 @@
         </rollingPolicy>
     </appender>
 
-    <!-- Async Console Appender -->
-    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="CONSOLE"/>
-        <queueSize>512</queueSize>
-    </appender>
+    <!-- Local Profile (Development with LocalStack) -->
+    <springProfile name="local">
+        <logger name="cl.api.base" level="DEBUG"/>
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="org.springframework.security" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
 
-    <!-- Async File Appender -->
-    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="FILE"/>
-        <queueSize>512</queueSize>
-    </appender>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
 
     <!-- Development Profile -->
     <springProfile name="dev">
@@ -48,7 +49,7 @@
         <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
 
         <root level="INFO">
-            <appender-ref ref="ASYNC_CONSOLE"/>
+            <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
 
@@ -59,8 +60,8 @@
         <logger name="org.springframework.security" level="WARN"/>
 
         <root level="INFO">
-            <appender-ref ref="ASYNC_CONSOLE"/>
-            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </root>
     </springProfile>
 
@@ -69,7 +70,7 @@
         <logger name="cl.api.base" level="DEBUG"/>
 
         <root level="INFO">
-            <appender-ref ref="ASYNC_CONSOLE"/>
+            <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
 </configuration>

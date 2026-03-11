@@ -235,7 +235,67 @@ Parameters:
 
 ## 🚢 Deployment
 
-### Docker (Coming Soon)
+### Docker
+
+The project includes Docker support with LocalStack for local AWS services emulation.
+
+**Run locally with Docker Compose:**
+
+```bash
+# Start all services (Spring Boot API + LocalStack)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+**Access:**
+- API: http://localhost:8080/api/v1
+- LocalStack: http://localhost:4566
+- Swagger UI: http://localhost:8080/api/v1/swagger-ui/index.html
+
+### Terraform - AWS EC2 Deployment
+
+Deploy to AWS EC2 using Terraform infrastructure as code.
+
+**Quick deploy:**
+
+```bash
+cd terraform
+
+# Configure variables
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your settings
+
+# Deploy
+terraform init
+terraform apply
+```
+
+📖 **Detailed instructions:** See [terraform/README.md](terraform/README.md) or [terraform/QUICKSTART.md](terraform/QUICKSTART.md)
+
+**What gets deployed:**
+- EC2 instance with Docker
+- Security Groups (SSH, HTTP, LocalStack)
+- Elastic IP
+- LocalStack container
+- Spring Boot API container
+- Automated setup via user-data script
+
+**After deployment:**
+```bash
+# Get outputs
+terraform output
+
+# Access API
+curl http://<PUBLIC_IP>:8080/api/v1/health
+
+# SSH into instance
+ssh -i ~/.ssh/your-key ec2-user@<PUBLIC_IP>
+```
 
 ### AWS Deployment Considerations
 
@@ -272,6 +332,9 @@ For support, email support@api.cl
 
 ## 🎯 Future Enhancements
 
+- [x] Docker & Docker Compose
+- [x] Terraform infrastructure (AWS EC2)
+- [x] LocalStack for AWS services emulation
 - [ ] Rate limiting
 - [ ] Redis caching
 - [ ] Email verification
@@ -279,7 +342,8 @@ For support, email support@api.cl
 - [ ] OAuth2 integration
 - [ ] API versioning strategy
 - [ ] Comprehensive integration tests
-- [ ] Docker & Docker Compose
-- [ ] CI/CD pipeline
+- [ ] CI/CD pipeline (GitHub Actions)
 - [ ] Monitoring & metrics (Prometheus, Grafana)
+- [ ] AWS ECS/Fargate deployment
+- [ ] Kubernetes manifests
 
