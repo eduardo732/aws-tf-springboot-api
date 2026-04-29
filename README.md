@@ -1,4 +1,4 @@
-# Base API - Professional RESTful API Template with Spring Boot 3
+# Professional RESTful with Spring Boot 3, AWS services, Terraform IAC, Local Stack
 
 A production-ready RESTful API template built with Spring Boot 3, featuring JWT authentication, H2 in-memory database for development, and comprehensive security.
 
