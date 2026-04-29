@@ -59,14 +59,18 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Role userRole = roleRepository.findByName(Role.RoleName.ROLE_USER)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", "ROLE_USER"));
+            .orElseGet(() -> {
+                Role newRole = new Role();
+                newRole.setName(Role.RoleName.ROLE_USER);
+                return roleRepository.save(newRole);
+            });
         user.setRoles(Set.of(userRole));
 
         User savedUser = userRepository.save(user);
         log.info("User registered successfully: {}", savedUser.getUsername());
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         return generateAuthResponse(authentication);
@@ -77,7 +81,7 @@ public class AuthService {
         log.info("User login attempt: {}", request.getUsername());
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -91,7 +95,7 @@ public class AuthService {
         String requestRefreshToken = request.getRefreshToken();
 
         RefreshToken refreshToken = refreshTokenRepository.findByToken(requestRefreshToken)
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token not found"));
+            .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token not found"));
 
         if (refreshToken.getRevoked()) {
             throw new TokenRefreshException(requestRefreshToken, "Refresh token is revoked");
@@ -106,7 +110,7 @@ public class AuthService {
         UserDetailsImpl userDetails = UserDetailsImpl.build(user);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities()
+            userDetails, null, userDetails.getAuthorities()
         );
 
         String accessToken = tokenProvider.generateAccessToken(authentication);
@@ -115,19 +119,19 @@ public class AuthService {
         log.info("Access token refreshed for user: {}", user.getUsername());
 
         return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(requestRefreshToken)
-                .tokenType("Bearer")
-                .expiresIn(tokenProvider.getAccessTokenExpiration())
-                .user(userResponse)
-                .build();
+            .accessToken(accessToken)
+            .refreshToken(requestRefreshToken)
+            .tokenType("Bearer")
+            .expiresIn(tokenProvider.getAccessTokenExpiration())
+            .user(userResponse)
+            .build();
     }
 
     @Transactional
     public void logout(String username) {
         log.info("User logout: {}", username);
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+            .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         refreshTokenRepository.revokeAllByUser(user);
         log.info("All refresh tokens revoked for user: {}", username);
@@ -139,24 +143,25 @@ public class AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDetails.getId()));
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDetails.getId()));
 
         RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .token(refreshToken)
-                .user(user)
-                .expiryDate(LocalDateTime.now().plusSeconds(tokenProvider.getAccessTokenExpiration() / 1000))
-                .build();
+            .token(refreshToken)
+            .user(user)
+            .expiryDate(LocalDateTime.now().plusSeconds(tokenProvider.getAccessTokenExpiration() / 1000))
+            .revoked(Boolean.FALSE)
+            .build();
         refreshTokenRepository.save(refreshTokenEntity);
 
         UserResponse userResponse = userMapper.toResponse(user);
 
         return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(tokenProvider.getAccessTokenExpiration())
-                .user(userResponse)
-                .build();
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .tokenType("Bearer")
+            .expiresIn(tokenProvider.getAccessTokenExpiration())
+            .user(userResponse)
+            .build();
     }
 }
 
