@@ -23,7 +23,6 @@ A production-ready RESTful API template built with Spring Boot 3, featuring JWT 
 - ✅ Role-based Authorization (ADMIN, USER, MODERATOR)
 - ✅ H2 In-Memory Database (no setup required)
 - ✅ PostgreSQL Ready for Production
-- ✅ Flyway Database Migrations
 - ✅ Global Exception Handling
 - ✅ Request Validation
 - ✅ Standard API Response Format
